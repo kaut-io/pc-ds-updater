@@ -1,0 +1,35 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: twistlock
+  name: ds-manager-role
+rules:
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs:
+  - 'delete'
+  - 'create'
+  - 'patch'
+  - 'list'
+  - 'get'
+  - 'update'
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: twistlock
+  name: ds-manager-binding
+subjects:
+- kind: ServiceAccount
+  name: ds-manager-sa
+  namespace: twistlock
+roleRef:
+  kind: Role
+  name: ds-manager-role
+  apiGroup: "rbac.authorization.k8s.io"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ds-manager-sa
+  namespace: twistlock
