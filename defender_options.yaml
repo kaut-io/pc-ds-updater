@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  defender_options.json: |-
+    {
+        "collectPodLabels": true,
+        "istio": false,
+        "containerRuntime": "containerd",
+        "namespace": "twistlock",
+        "memoryLimit": 1024,
+        "privileged": false,
+        "selinux": false,
+        "uniqueHostname": true,
+        "orchestration": "Kubernetes",
+        "consoleAddr": "us-west1.cloud.twistlock.com:443",
+        "serviceaccounts": true
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: defender-options
+  namespace: twistlock

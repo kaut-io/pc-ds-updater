@@ -4,8 +4,34 @@ metadata:
   namespace: twistlock
   name: ds-manager-role
 rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs:
+  - 'delete'
+  - 'create'
+  - 'get'
+  - 'patch'
+  - 'update'
+- apiGroups: [""]
+  resources: ["services", "serviceaccounts"]
+  verbs:
+  - 'delete'
+  - 'create'
+  - 'patch'
+  - 'list'
+  - 'get'
+  - 'update'
 - apiGroups: ["apps"]
   resources: ["daemonsets"]
+  verbs:
+  - 'delete'
+  - 'create'
+  - 'patch'
+  - 'list'
+  - 'get'
+  - 'update'
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
   verbs:
   - 'delete'
   - 'create'
@@ -33,3 +59,34 @@ kind: ServiceAccount
 metadata:
   name: ds-manager-sa
   namespace: twistlock
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: twistlock
+  name: ds-manager-clusterrole
+rules:
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"] # Allow Defenders to list RBAC resources
+  verbs:
+  - 'delete'
+  - 'create'
+  - 'patch'
+  - 'list'
+  - 'get'
+  - 'update'
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: twistlock
+  name: ds-manager-clusterbinding
+subjects:
+- kind: ServiceAccount
+  name: ds-manager-sa
+  namespace: twistlock
+roleRef:
+  kind: ClusterRole
+  name: ds-manager-clusterrole
+  apiGroup: "rbac.authorization.k8s.io"

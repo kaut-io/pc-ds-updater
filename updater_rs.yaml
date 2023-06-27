@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: updater
+  name: updater
+  namespace: twistlock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: couchpotato
+  template:
+    metadata:
+      labels:
+        purpose: download-media
+        app: couchpotato
+    spec:
+      containers:
+      - image: updater
+        imagePullPolicy: Never
+        name: updater
+        env:
+        - name: TZ
+          value: "America/Chicago"
+        volumeMounts:
+          - name: pcc-files
+            mountPath: /.prismacloud
+            readOnly: true
+        resources: {}
+      volumes:
+        - name: pcc-files
+          projected:
+            sources:
+            - secret:
+                name: pcc-secrets
+                optional: true
+            - configMap:
+                name: defender-options
+                optional: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      serviceAccount: ds-manager-sa

@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: revproxy
+  name: env-certbot-configmap
+data:
+  TZ: "America/Chicago"
+  DOMAIN: "kaut.io"
+  RENEW_BEFORE_DAYS: "31"
+  EMAIL: "lonkaut@gmail.com"
+  CERTNAME: letsencrypt
+  TEST: "false"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: certbot
+  namespace: revproxy
+  labels:
+    app: certbot
+spec:
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 86400
+  schedule: "0 17 20 */2 *"
+  # schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: secretsmanagersa
+          containers:
+          - name: certbot
+            image: dukekautington/certbot
+            # command: ["tail"]
+            # args: ["-f", "/dev/null"]
+            resources:
+              requests:
+                ephemeral-storage: "250Mi"
+              limits:
+                ephemeral-storage: "500Mi"
+            envFrom:
+            - configMapRef:
+                name: env-certbot-configmap
+            volumeMounts:
+              # - name: letsencryptvol
+              #   mountPath: /etc/letsencrypt
+              - name: googlecreds-vol
+                mountPath: /etc/letsencrypt
+                readOnly: true
+          volumes:
+            - name: googlecreds-vol
+              secret:
+                secretName: googlecreds
+                optional: true
+            # - name: letsencryptvol
+            #   hostPath:
+            #     path: /nfs/nginx/letsencrypt
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: SecretsManager
+rules:
+- apiGroups: [""]
+  resources:
+  - secrets
+  - serviceaccounts
+  - serviceaccounts/token
+  verbs:
+  - 'delete'
+  - 'create'
+  - 'patch'
+  - 'list'
+  - 'get'
+  - 'update'
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: SecretsManagerBinding
+subjects:
+- kind: ServiceAccount
+  name: secretsmanagersa
+  namespace: revproxy
+roleRef:
+  kind: ClusterRole
+  name: SecretsManager
+  apiGroup: ""
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: secretsmanagersa
+  namespace: revproxy
+---
+apiVersion: v1
+data:
+  googlekey.json: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAiZG9tYWluLWF1dG9tYXRpb24iLAogICJwcml2YXRlX2tleV9pZCI6ICIyNTdiMTYyMmFmN2ZkMmY3N2FkNjRkOWExMTk5NDg4ZjYyMzkxZmYzIiwKICAicHJpdmF0ZV9rZXkiOiAiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5NSUlFdmdJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLZ3dnZ1NrQWdFQUFvSUJBUUNQUzBuaGg3azRjWndqXG5EeDdLa05oZGcrMFdZaGU3RVdhcHg3YnVVUGlBRUlVY0dMZDJBVE93ZmNHeDFSaWp6RloyL2ptUzl1T0xNK1FmXG4raWgvN1ZQMTZkcmFBRGxyQnN5WUllNEtjRGJvaUJnRVBXT1VraFlxZVhEWEo4U2xFa2E2Q2VydzJBc2ZUUE9vXG44c0F2TW1ja2tRZEI4aTlkYnNId3E1WEVWVW9TUjVnZGpkbEp1WUNDYyt1RGRDa2UwTDNqanR2amprNVkzM1pKXG5wY2VHdFExMUZYemNCR0htSDU0SXMwTkZvU0tlU3E2K3dLQTduU3F1WC9Ya2d1Qm5PUGpNYzU5ME1CS1BQNFN1XG5TaXRXZWdsQWwxOHFJZ0lHdnFoMEYxdW9IM0hPejVEVm9XVzIyWlkyRndjZGNEVnhDVXZ3OEY5bkkyQkdyeWZNXG5ydmpmSnJXYkFnTUJBQUVDZ2dFQUlnZXpTQWcvaUpRU2pKRHVzeFNyRGFwakI4bkw4UFUwK0dVaG9IOUNSTWVuXG5sUUNac1VDZjBlNUxyYnY1Mmd5UkREbGIydmNmR3RQNy9Vd2ZpaUlHcW9RYklXS2tRREtoTEJBQ3hCL2FLbWNIXG5yUm9YS0JWNWhpVEpFNCt5TjdHYmNsc2duSW55T2tEQUxRTlplTnZ6ZXMrbWRaYmFnTW5vN1FzU3lrbW5DYWYwXG5BMlRwd3JPUmdQdVdlek5JamU3L2h3Um5TUmdFaHBaMDdKSmRIWm9reXNINVhYU2xTZzk0cDNJOUVXUjVpTnpoXG5UcWtNNHdPRVhXeitUZUFwTXZxSVEvZ1B5TkxVRHg5cUZYU05YcWY5SUJ6TXFWZDdNNkdUd2pDQ3lUZ1hKS0g2XG5wa1lmSXU5YUpNNGtXWUVIK3NNYmd6bFkvcFhGYkN0elNoQm9VM0ZrWVFLQmdRREd5QjlNNEtuZlNzRmk2Rk4zXG5YODZHaTNXSkJvRnRuZ09aWFdvdEhDOVJBRU5MSE52c0c4VWpVZDMwS0w2YWNaNjMvR1pkclNMSGxVcU4wUHJTXG53Wmplc01rMzd0Z2tvdnJ4RnpyRklUOFUzeDd3Zld5ckE1czhzUkRxM2RieDg5empNVkZXUktKdURpMG9kWFRzXG4rOFBJd2NMeU1jT0lBbDdzaitQWnpvZmZyUUtCZ1FDNGltRTlSSmNITC90UE1GRWZOSlo5UDdEZlgxVGs5cTVvXG5mRVBkaG44ZUUvNkpaR1dKV2lvQzIzK0J0cTdtOWNMQ0lla3JaWHVFQzNFeEtHbTg3dXhOYzM1a25JWi9CNlY0XG5OTGptcGdydDdtN1FWNEVYWjdrTFAxNkZhN0VKejV6MlJlTW1ZL2FZcUxzMElIM0txbUdpWmNWNFpQYUNvMjk5XG43VEJuTFNWelp3S0JnUUNmMWlEYzl6V0FsNktpZmo5SEdLRi9MRG9wSVRNSFNteUljRVhFMmdudDd2RXRQNXBTXG40dzJFVmZyTHJjdDljbWoyZGh4MXJKYnZ0c3FJK0FZSFc2WXBRaXU2THZKYm16VitrSGd3TkloOXB0OUE3d2xuXG5CWEpZdmVQbGh0V2tIYnQ2YjVpQWJwWFJPdEx5Mm1kWGV5VzFrcC9Ia1Y0eFNmNjc1d09HaW54VXpRS0JnUUNxXG5rdllZcktxdzhRL28vVzh1V2V4MEx3ZnRJSEFYQjFEa3NXQUZoa2svWXhuV294OGJXMlVUcVJIdHN3OXQybUpBXG5FUm8yaTZJa3huTEZEbWJXUlQzVXhWbGg1RENKZ0diWmVsb2lqLzN3T1lEaVFNL0k4NDNlTUovTTBXTWQvM0pGXG5UUW9PTlQzOWs1RWVPSjR0VTFuVnd4NUpENEd2OVNPY0VUNjVUOGliSndLQmdDUlArS1BGajVvNHI1U29TNXRDXG52RjltaXYyY2p3V09Qckc3dHgxTzZ5M2xIRlI0dUMwSVdvVXA3TzZZMGs2ekVUT1NURjJHYXp1WkFiYm9Hb2V0XG5aNytNVUlrRHVpQXFBTFRKQldocGNwUEtTZ0MwRFEzQzlnMU5jMW9mWWZKVzNWVGkwL1k1QTlUc1ZlemM4QTgwXG54VlBBS0NNYU4xZGo4b0lZSEVjSlZpbnRcbi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS1cbiIsCiAgImNsaWVudF9lbWFpbCI6ICJjZXJ0Ym90QGRvbWFpbi1hdXRvbWF0aW9uLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjEwMzI1MzIyOTQ3ODg0ODk3NDAwNSIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvY2VydGJvdCU0MGRvbWFpbi1hdXRvbWF0aW9uLmlhbS5nc2VydmljZWFjY291bnQuY29tIgp9Cg==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: googlecreds
+  namespace: revproxy
