@@ -9,16 +9,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: couchpotato
+      app: updater
   template:
     metadata:
       labels:
-        purpose: download-media
-        app: couchpotato
+        app: updater
     spec:
       containers:
-      - image: updater
-        imagePullPolicy: Never
+      - image: dukekautington/pc-ds-updater:23_06_27
         name: updater
         env:
         - name: TZ
