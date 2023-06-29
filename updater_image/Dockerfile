@@ -1,6 +1,6 @@
 # ARG arch
 # FROM --platform=linux/${arch} python:3.11-alpine
-FROM FROM --platform=${BUILDPLATFORM:-linux/amd64} python:3.11-alpine
+FROM --platform=${BUILDPLATFORM:-linux/amd64} python:3.11-alpine
 
 ARG BUILDPLATFORM
 
