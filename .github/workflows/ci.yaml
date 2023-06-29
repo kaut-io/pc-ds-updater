@@ -64,8 +64,8 @@ jobs:
       with:
         username: ${{ env.DOCKER_USERNAME }}
         password: ${{ env.DOCKER_TOKEN }}
-    # - name: Build the Docker image
-    #   run: docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" $BUILD_DIR
+    - name: Build the Docker image
+      run: docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" $BUILD_DIR
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1
