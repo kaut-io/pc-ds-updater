@@ -1,6 +1,9 @@
 # ARG arch
 # FROM --platform=linux/${arch} python:3.11-alpine
-FROM python:3.11-alpine
+FROM FROM --platform=${BUILDPLATFORM:-linux/amd64} python:3.11-alpine
+
+ARG BUILDPLATFORM
+
 LABEL MAINTAINER="lonkaut@gmail.com"
 RUN apk update \
 && apk add curl \
