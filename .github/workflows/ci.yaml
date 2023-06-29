@@ -58,7 +58,7 @@ jobs:
         echo "REPO=`echo $REPO | tr '[:upper:]' '[:lower:]'`" >> $GITHUB_ENV
     - name: Build the Docker image
       # run: docker build -t "$DOCKER_USERNAME/$REPO:$(date +%y_%m_%d)" -t "$DOCKER_USERNAME/$REPO:latest" .
-      run: docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" $BUILD_DIR
+      run: docker build --platform linux/arm64,linux/amd64 -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" $BUILD_DIR
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1

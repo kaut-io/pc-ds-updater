@@ -1,4 +1,6 @@
-FROM --platform=amd64 python:3.11-alpine
+# ARG arch
+# FROM --platform=linux/${arch} python:3.11-alpine
+FROM python:3.11-alpine
 LABEL MAINTAINER="lonkaut@gmail.com"
 RUN apk update \
 && apk add curl \
