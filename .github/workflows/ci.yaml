@@ -75,6 +75,8 @@ jobs:
         pcc_user: ${{ env.PRISMA_USERNAME }}
         pcc_pass: ${{ env.PRISMA_PASSWORD }}
         image_name: ${{ env.DOCKER_USERNAME }}/${{ env.REPO }}:${{env.BUILD_ID}}
+    - name: Run yor action
+      uses: bridgecrewio/yor-action@main
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
@@ -84,8 +86,6 @@ jobs:
         tags: |
             ${{env.DOCKER_USERNAME}}/${{env.REPO}}:${{env.BUILD_ID}}
             ${{env.DOCKER_USERNAME}}/${{env.REPO}}:latest
-
-    - name: Run yor action
-      uses: bridgecrewio/yor-action@main
-    - name: Publish the Docker image
-      run: docker push -a ${{ env.DOCKER_USERNAME }}/${{ env.REPO }}
+    # Not needed since it is pushed in the above step
+    # - name: Publish the Docker image
+    #   run: docker push -a ${{ env.DOCKER_USERNAME }}/${{ env.REPO }}
