@@ -69,7 +69,8 @@ jobs:
         # docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" $BUILD_DIR
         docker buildx create --name mybuilder --use --bootstrap
         docker buildx build -o type=local,dest=. --platform linux/amd64,linux/arm64 -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" $BUILD_DIR
-        ls
+        ls -l
+        file linux_*
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1
