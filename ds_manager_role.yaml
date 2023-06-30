@@ -75,6 +75,11 @@ rules:
   - 'list'
   - 'get'
   - 'update'
+- apiGroups: ["apps"]
+  resources: ["namespaces", "pods", "deployments", "replicasets"]
+  verbs:
+  - 'list'
+  - 'get'
 
 ---
 kind: ClusterRoleBinding
