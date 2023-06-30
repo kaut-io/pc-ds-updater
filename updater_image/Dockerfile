@@ -8,7 +8,8 @@ FROM python:3.11-alpine
 LABEL MAINTAINER="lonkaut@gmail.com"
 RUN apk update \
 && apk add curl \
-&& curl -L -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+&& [[ $(uname -m) == "aarch64"]] && arch="arm64" || arch="amd64" \
+&& curl -L -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/$arch/kubectl \
 && chmod a+x /usr/bin/kubectl
 
 USER nobody
