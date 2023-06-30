@@ -76,11 +76,15 @@ rules:
   - 'get'
   - 'update'
 - apiGroups: ["apps"]
-  resources: ["namespaces", "pods", "deployments", "replicasets"]
+  resources: ["deployments", "replicasets"]
   verbs:
   - 'list'
   - 'get'
-
+- apiGroups: [""]
+  resources: ["namespaces", "pods"]
+  verbs:
+  - 'list'
+  - 'get'
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
