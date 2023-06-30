@@ -15,12 +15,9 @@ spec:
       labels:
         app: updater
     spec:
-      nodeSelector:
-        k3s.io/hostname: rancher-desktop-arm64
       containers:
-      - image: dukekautington/pc-ds-updater:23_06_27
-      # - image: updater
-      #   imagePullPolicy: Never
+      - image: dukekautington/pc-ds-updater:23_06_30
+        imagePullPolicy: Always
         name: updater
         env:
         - name: TZ
