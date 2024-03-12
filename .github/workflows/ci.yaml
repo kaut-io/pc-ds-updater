@@ -70,7 +70,7 @@ jobs:
         docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" $BUILD_DIR
     - name: image sandbox
       run: |
-        TOKEN=`curl -k -H "Content-Type: application/json" -X POST -d '{"username":"'"$PRISMA_USERNAME"'","password":"'"$PRISMA_PASSWORD"'"}' $COMPUTE_URL/api/v1/authenticate | jq .token `
+        TOKEN=`curl -k -H "Content-Type: application/json" -X POST -d '{"username":"'"$PRISMA_USERNAME"'","password":"'"$PRISMA_PASSWORD"'"}' $COMPUTE_URL/api/v1/authenticate | jq -r .token `
         echo "$TOKEN"
         curl --progress-bar -JLO --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli
         chmod a+x ./twistcli
