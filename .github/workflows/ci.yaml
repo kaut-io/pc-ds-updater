@@ -76,7 +76,7 @@ jobs:
         chmod a+x ./twistcli
         ./twistcli --help
         docker image ls
-        ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:$BUILD_ID
+        ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:$BUILD_ID sleep 61
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1
