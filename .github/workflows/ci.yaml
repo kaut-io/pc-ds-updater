@@ -71,7 +71,8 @@ jobs:
     - name: image sandbox
       run: |
         TOKEN=`curl -k -H "Content-Type: application/json" -X POST -d '{"username":"$PRISMA_USERNAME","password":"$PRISMA_PASSWORD"}' $COMPUTE_URL/api/v1/authenticate | jq -r .token `
-        curl --progress-bar -L --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli > twistcli; chmod a+x twistcli
+        curl --progress-bar -JLO --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli
+        chmod a+x ./twistcli
         ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:latest
     - name: Prisma Cloud image scan
       id: scan
