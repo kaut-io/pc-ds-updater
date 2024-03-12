@@ -74,7 +74,9 @@ jobs:
         echo "$TOKEN"
         curl --progress-bar -JLO --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli
         chmod a+x ./twistcli
-        ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:latest
+        ./twistcli --help
+        docker image ls
+        ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:$BUILD_ID
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1
