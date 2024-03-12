@@ -13,6 +13,7 @@ env:
   PRISMA_USERNAME: ${{ secrets.PCC_USER }}
   PRISMA_PASSWORD: ${{ secrets.PCC_PASS }}
   PRISMA_API_URL: ${{ vars.PRISMA_API_URL }}
+  COMPUTE_URL: "https://us-west1.cloud.twistlock.com/us-4-161028595"
   BUILD_DIR: "./updater_image"
 
 jobs:
@@ -67,6 +68,11 @@ jobs:
     - name: Build the Docker image for scanning purposes
       run: |
         docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" $BUILD_DIR
+    - name: image sandbox
+      run: |
+        TOKEN=`curl -k -H "Content-Type: application/json" -X POST -d '{"username":"$PRISMA_USERNAME","password":"$PRISMA_PASSWORD"}' $COMPUTE_URL/api/v1/authenticate | jq -r .token `
+        curl --progress-bar -L --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli > twistcli; chmod a+x twistcli
+        twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:latest
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1
