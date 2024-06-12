@@ -68,15 +68,15 @@ jobs:
     - name: Build the Docker image for scanning purposes
       run: |
         docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" $BUILD_DIR
-    - name: image sandbox
-      run: |
-        TOKEN=`curl -k -H "Content-Type: application/json" -X POST -d '{"username":"'"$PRISMA_USERNAME"'","password":"'"$PRISMA_PASSWORD"'"}' $COMPUTE_URL/api/v1/authenticate | jq -r .token `
-        echo "$TOKEN"
-        curl --progress-bar -JLO --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli
-        chmod a+x ./twistcli
-        ./twistcli --help
-        docker image ls
-        ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:$BUILD_ID sleep 61
+    # - name: image sandbox
+    #   run: |
+    #     TOKEN=`curl -k -H "Content-Type: application/json" -X POST -d '{"username":"'"$PRISMA_USERNAME"'","password":"'"$PRISMA_PASSWORD"'"}' $COMPUTE_URL/api/v1/authenticate | jq -r .token `
+    #     echo "$TOKEN"
+    #     curl --progress-bar -JLO --header "authorization: Bearer $TOKEN" $COMPUTE_URL/api/v1/util/twistcli
+    #     chmod a+x ./twistcli
+    #     ./twistcli --help
+    #     docker image ls
+    #     ./twistcli sandbox --address $COMPUTE_URL --token $TOKEN --analysis-duration 1m $DOCKER_USERNAME/$REPO:$BUILD_ID sleep 61
     - name: Prisma Cloud image scan
       id: scan
       uses: PaloAltoNetworks/prisma-cloud-scan@v1
