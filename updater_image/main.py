@@ -150,15 +150,15 @@ def build_opts(defender_dict, options):
                         options["containerRuntime"] = "crio"
             elif x['value'] == "daemonset":
                 options["containerRuntime"] = "docker"
-        if x['name'] == "CLOUD_HOSTNAME_ENABLED":
-                options["uniqueHostname"] = eval(x['value'].capitalize())
-        if x['name'] == "MONITOR_SERVICE_ACCOUNTS":
-                options["serviceaccounts"] = eval(x['value'].capitalize())
-        if x['name'] == "COLLECT_POD_LABELS":
-                options["collectPodLabels"] = eval(x['value'].capitalize())
-        if x['name'] == "MONITOR_ISTIO":
-                options["istio"] = eval(x['value'].capitalize())
-        if x['name'] == "DEFENDER_CLUSTER":
+        if x['name'] == "CLOUD_HOSTNAME_ENABLED" and 'value' in x:
+            options["uniqueHostname"] = eval(x['value'].capitalize())
+        if x['name'] == "MONITOR_SERVICE_ACCOUNTS" and 'value' in x:
+            options["serviceaccounts"] = eval(x['value'].capitalize())
+        if x['name'] == "COLLECT_POD_LABELS" and 'value' in x:
+            options["collectPodLabels"] = eval(x['value'].capitalize())
+        if x['name'] == "MONITOR_ISTIO" and 'value' in x:
+            options["istio"] = eval(x['value'].capitalize())
+        if x['name'] == "DEFENDER_CLUSTER" and 'value' in x:
             options["cluster"] = x['value']
         if "seLinuxOptions" in defender_dict["spec"]["template"]["spec"]["containers"][0]["securityContext"]: 
             if defender_dict["spec"]["template"]["spec"]["containers"][0]["securityContext"]["seLinuxOptions"]["type"] == "spc_t":
