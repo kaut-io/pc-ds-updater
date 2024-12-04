@@ -52,17 +52,17 @@ jobs:
         external_checks_dirs: ./checkov
         download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
         #log_level: DEBUG # optional: set log level. Default WARNING
-    - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v2
+    # - name: Upload SARIF file
+    #   uses: github/codeql-action/upload-sarif@v2
         
-        # Results are generated only on a success or failure
-        # this is required since GitHub by default won't run the next step
-        # when the previous one has failed. Security checks that do not pass will 'fail'.
-        # An alternative is to add `continue-on-error: true` to the previous step
-        # Or 'soft_fail: true' to checkov.
-      if: success() || failure()
-      with:
-        sarif_file: results.sarif
+    #     # Results are generated only on a success or failure
+    #     # this is required since GitHub by default won't run the next step
+    #     # when the previous one has failed. Security checks that do not pass will 'fail'.
+    #     # An alternative is to add `continue-on-error: true` to the previous step
+    #     # Or 'soft_fail: true' to checkov.
+    #   if: success() || failure()
+    #   with:
+    #     sarif_file: results.sarif
     - name: Assign build number
       run: |
         echo "BUILD_ID=$(date +'%y_%m_%d')" >> $GITHUB_ENV
