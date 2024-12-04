@@ -27,13 +27,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # - name: Dump github context
-    #   run:   echo "$GITHUB_CONTEXT"
-    #   shell: bash
-    #   env:
-    #     GITHUB_CONTEXT: ${{ toJson(github) }}
-    # - name: Test variables
-    #   run: echo "hello from $REPO"
+    - name: Dump github context
+      run:   echo "$GITHUB_CONTEXT"
+      shell: bash
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+    - name: Test variables
+      run: echo "hello from $REPO"
     - name: Run Bridgecrew 
       id: Bridgecrew
       uses: bridgecrewio/bridgecrew-action@master
