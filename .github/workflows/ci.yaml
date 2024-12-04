@@ -34,23 +34,23 @@ jobs:
     #     GITHUB_CONTEXT: ${{ toJson(github) }}
     # - name: Test variables
     #   run: echo "hello from $REPO"
-    # - name: Run Bridgecrew 
-    #   id: Bridgecrew
-    #   uses: bridgecrewio/bridgecrew-action@master
-    #   # env:
-    #   #   PRISMA_API_URL: https://api4.prismacloud.io
-    #   with:
-    #     api-key: ${{ env.PRISMA_USERNAME }}::${{ env.PRISMA_PASSWORD }}
-    #     #directory: "example/examplea"
-    #     #check: CKV_AWS_1 # optional: run only a specific check_id. can be comma separated list
-    #     #skip_check: CKV_AWS_1 # optional: skip a specific check_id. can be comma separated list
-    #     soft_fail: true
-    #     #framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
-    #     output_format: cli
-    #     quiet: false
-    #     external_checks_dirs: ./checkov
-    #     download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
-    #     #log_level: DEBUG # optional: set log level. Default WARNING
+    - name: Run Bridgecrew 
+      id: Bridgecrew
+      uses: bridgecrewio/bridgecrew-action@master
+      # env:
+      #   PRISMA_API_URL: https://api4.prismacloud.io
+      with:
+        api-key: ${{ env.PRISMA_USERNAME }}::${{ env.PRISMA_PASSWORD }}
+        #directory: "example/examplea"
+        #check: CKV_AWS_1 # optional: run only a specific check_id. can be comma separated list
+        #skip_check: CKV_AWS_1 # optional: skip a specific check_id. can be comma separated list
+        soft_fail: true
+        #framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+        output_format: cli
+        quiet: false
+        external_checks_dirs: ./checkov
+        download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
+        #log_level: DEBUG # optional: set log level. Default WARNING
     - name: Assign build number
       run: |
         echo "BUILD_ID=$(date +'%y_%m_%d')" >> $GITHUB_ENV
