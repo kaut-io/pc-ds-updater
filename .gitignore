@@ -38,4 +38,7 @@ kubeconfig*
 *.zip
 prismacloud.sentinel
 sentinel.hcl
-.DS_Store
+.DS_Store.idea
+.idea/*
+**/.idea/*
+
