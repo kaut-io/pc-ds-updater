@@ -39,6 +39,5 @@ kubeconfig*
 prismacloud.sentinel
 sentinel.hcl
 .DS_Store.idea
-.idea/*
-**/.idea/*
+.idea/
 
