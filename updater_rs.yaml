@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   labels:
     app: updater
@@ -16,7 +16,7 @@ spec:
         app: updater
     spec:
       containers:
-      - image: dukekautington/pc-ds-updater:23_06_30
+      - image: dukekautington/pc-ds-updater:24_12_04
         imagePullPolicy: Always
         name: updater
         env:
